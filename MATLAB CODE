@@ -1,42 +1,75 @@
 clc
 clear all
 close all
-t=0:0.01:4;
-y=sin(2*pi*t);
-w1=ones(1,50);
-w2=zeros(1,50);
-y2=[w1 w2 w1 w2 w1 w2 w1 w2 0];
-y3=y.*y2;
-subplot 411
-plot(t,y)
+
+% Define the time vector
+t = 0:0.01:4;
+
+% Generate the input sine wave
+y = sin(2*pi*t);
+
+% Create the rectified waveform using a window function
+w1 = ones(1,50);
+w2 = zeros(1,50);
+y2 = [w1 w2 w1 w2 w1 w2 w1 w2 0];
+y3 = y .* y2;
+
+% Plot the input sine wave
+subplot(4,1,1)
+plot(t, y)
+title('Input Sine Wave')
+xlabel('Time')
+ylabel('Amplitude')
 axis([0 4 -1.2 1.2])
-subplot 412
-plot(t,y3)
+
+% Plot the rectified waveform
+subplot(4,1,2)
+plot(t, y3)
+title('Full-Wave Rectified Waveform')
+xlabel('Time')
+ylabel('Amplitude')
 axis([0 4 0 1.2])
-w1=ones(1,50);
-w2=-1*ones(1,50);
-y2=[w1 w2 w1 w2 w1 w2 w1 w2 0];
-y3=y.*y2;
-subplot 413
-plot(t,y3)
-axis([0 4 0 1.2 ])
-fs=10;
- T=pi;
-  k=0:1/fs:5-1/fs;
-  w=2*pi/T;
-   syms t
-  N=3;
- n=1:N;
- x=sin(t);
- hold on
- grid on
- a0=(2/pi)*(int(sin(t),t,0,pi));
- an=(2/pi)*(int(sin(t)*cos(n*w*t),t,0,pi));
-  bn=(2/pi)*(int(sin(t)*sin(n*w*t),t,0,pi));
-  F=a0/2;
- for i=1:N
-  F=F+an(i)*cos(i*w*k)+bn(i)*sin(i*w*k);
- end
-subplot 414
- plot(k,F)
- 
+
+% Create another waveform for Fourier series analysis
+w1 = ones(1,50);
+w2 = -1 * ones(1,50);
+y2 = [w1 w2 w1 w2 w1 w2 w1 w2 0];
+y3 = y .* y2;
+
+% Plot the modified rectified waveform
+subplot(4,1,3)
+plot(t, y3)
+title('Modified Rectified Waveform')
+xlabel('Time')
+ylabel('Amplitude')
+axis([0 4 0 1.2])
+
+% Fourier series analysis
+fs = 10;
+T = pi;
+k = 0:1/fs:5-1/fs;
+w = 2 * pi / T;
+syms t_sym
+N = 3;
+n = 1:N;
+x = sin(t_sym);
+hold on
+grid on
+
+% Calculate Fourier series coefficients
+a0 = (2/pi) * int(sin(t_sym), t_sym, 0, pi);
+an = (2/pi) * int(sin(t_sym) * cos(n*w*t_sym), t_sym, 0, pi);
+bn = (2/pi) * int(sin(t_sym) * sin(n*w*t_sym), t_sym, 0, pi);
+
+% Reconstruct the signal using Fourier series
+F = a0 / 2;
+for i = 1:N
+    F = F + an(i) * cos(i*w*k) + bn(i) * sin(i*w*k);
+end
+
+% Plot the Fourier series reconstruction
+subplot(4,1,4)
+plot(k, F)
+title('Fourier Series Reconstruction')
+xlabel('Frequency')
+ylabel('Amplitude')
